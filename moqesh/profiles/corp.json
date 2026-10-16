@@ -1,0 +1,16 @@
+{
+  "theme": "corporate",
+  "server_banner": "Microsoft-IIS/10.0",
+  "vocabulary": [
+    "intranet", "hr", "finance", "legal", "projects", "reports", "policies",
+    "teams", "vendors", "contracts", "shared", "it"
+  ],
+  "paths": [
+    "/intranet/", "/hr/", "/finance/", "/reports/", "/projects/", "/it/", "/api/"
+  ],
+  "api_prefixes": ["/api/v1"],
+  "api_resources": [
+    "employee", "department", "document", "policy", "ticket", "asset",
+    "vendor", "contract", "expense", "approval", "timesheet", "runbook"
+  ]
+}

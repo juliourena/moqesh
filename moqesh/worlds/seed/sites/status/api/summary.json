@@ -1,0 +1,11 @@
+{
+  "updated_at": "{{moqesh.now_iso}}",
+  "overall": "operational",
+  "components": [
+    { "name": "API Gateway", "status": "operational" },
+    { "name": "Billing", "status": "operational" },
+    { "name": "Authentication", "status": "operational" },
+    { "name": "Reporting", "status": "degraded_performance" },
+    { "name": "Notifications", "status": "operational" }
+  ]
+}

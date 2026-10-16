@@ -1,0 +1,16 @@
+{
+  "theme": "corporate",
+  "server_banner": "nginx",
+  "vocabulary": [
+    "members", "events", "donations", "ministries", "groups", "volunteers",
+    "attendance", "finance", "reports", "calendar", "announcements", "admin"
+  ],
+  "paths": [
+    "/admin/", "/members/", "/events/", "/donations/", "/ministries/", "/api/"
+  ],
+  "api_prefixes": ["/api/v1"],
+  "api_resources": [
+    "member", "event", "donation", "ministry", "group", "attendance",
+    "pledge", "household", "service", "announcement", "volunteer", "campus"
+  ]
+}

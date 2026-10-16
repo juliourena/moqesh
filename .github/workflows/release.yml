@@ -1,0 +1,124 @@
+name: Release
+
+# Dispara en tags vX.Y.Z (o manualmente). Compila los binarios del agente para
+# las plataformas soportadas, publica el Release con los artefactos y empuja la
+# imagen Docker multi-arch a GHCR.
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  packages: write
+
+env:
+  PYINSTALLER_ARGS: >-
+    --onefile --name moqesh-agent
+    --hidden-import httpx
+    --exclude-module fastapi --exclude-module uvicorn
+    --exclude-module pydantic --exclude-module pydantic_settings
+    moqesh/agent/__main__.py
+
+jobs:
+  # --- Binario del agente: Linux x86_64 (nativo) ---
+  agent-linux-amd64:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -e . pyinstaller
+      - run: pyinstaller ${{ env.PYINSTALLER_ARGS }}
+      - run: mv dist/moqesh-agent moqesh-agent-linux-amd64
+      - uses: actions/upload-artifact@v4
+        with:
+          name: moqesh-agent-linux-amd64
+          path: moqesh-agent-linux-amd64
+
+  # --- Binario del agente: Linux arm64 (vía QEMU, sin depender de runners arm) ---
+  agent-linux-arm64:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-qemu-action@v3
+      - name: Build en container arm64 emulado
+        run: |
+          docker run --rm --platform linux/arm64 -v "$PWD":/src -w /src python:3.12-slim bash -c "
+            apt-get update && apt-get install -y binutils >/dev/null &&
+            pip install -e . pyinstaller &&
+            pyinstaller ${{ env.PYINSTALLER_ARGS }} &&
+            cp dist/moqesh-agent moqesh-agent-linux-arm64"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: moqesh-agent-linux-arm64
+          path: moqesh-agent-linux-arm64
+
+  # --- Binario del agente: Windows x86_64 (nativo) ---
+  agent-windows-amd64:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -e . pyinstaller
+      - run: pyinstaller --onefile --name moqesh-agent --hidden-import httpx --exclude-module fastapi --exclude-module uvicorn --exclude-module pydantic --exclude-module pydantic_settings moqesh/agent/__main__.py
+      - run: move dist\moqesh-agent.exe moqesh-agent-windows-amd64.exe
+      - uses: actions/upload-artifact@v4
+        with:
+          name: moqesh-agent-windows-amd64
+          path: moqesh-agent-windows-amd64.exe
+
+  # --- Publica el GitHub Release con los binarios ---
+  release:
+    needs: [agent-linux-amd64, agent-linux-arm64, agent-windows-amd64]
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+      - name: Publicar Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: artifacts/**/*
+
+  # --- Imagen Docker multi-arch a GHCR (con los binarios linux embebidos) ---
+  docker:
+    needs: [agent-linux-amd64, agent-linux-arm64]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+      - name: Colocar binarios del agente en moqesh/agent/dist
+        run: |
+          mkdir -p moqesh/agent/dist
+          cp artifacts/moqesh-agent-linux-amd64/moqesh-agent-linux-amd64 moqesh/agent/dist/
+          cp artifacts/moqesh-agent-linux-arm64/moqesh-agent-linux-arm64 moqesh/agent/dist/
+          chmod +x moqesh/agent/dist/*
+      - name: Nombre de imagen en minúsculas (requisito de GHCR)
+        run: echo "IMAGE=ghcr.io/${GITHUB_REPOSITORY,,}" >> "$GITHUB_ENV"
+      - uses: docker/setup-qemu-action@v3
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Tags de la imagen
+        run: |
+          if [ "${GITHUB_REF_TYPE}" = "tag" ]; then
+            echo "TAGS=${IMAGE}:${GITHUB_REF_NAME},${IMAGE}:latest" >> "$GITHUB_ENV"
+          else
+            echo "TAGS=${IMAGE}:dev" >> "$GITHUB_ENV"
+          fi
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ env.TAGS }}

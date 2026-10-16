@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Getting started — Harborline Docs</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<style>
+  body{margin:0;font:15px/1.65 -apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:#1f2430;background:#fff}
+  .wrap{display:flex;min-height:100vh}
+  aside{width:240px;border-right:1px solid #e5e7eb;padding:22px 18px;background:#fafafa}
+  aside a{display:block;color:#374151;text-decoration:none;padding:4px 0;font-size:14px}
+  aside a:hover{color:#2563eb}
+  main{flex:1;max-width:760px;padding:36px 42px}
+  h1{font-size:26px;margin:0 0 8px} h3{margin-top:28px}
+  code{font-family:ui-monospace,Menlo,monospace;background:#f3f4f6;padding:1px 5px;border-radius:4px}
+  pre{background:#0f1115;color:#e6e6e6;padding:14px 16px;border-radius:8px;overflow:auto}
+  pre code{background:none;color:inherit;padding:0}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <aside>
+    <strong>Harborline Docs</strong><br><br>
+    <a href="/docs/">Introduction</a>
+    <a href="/docs/getting-started.html">Getting started</a>
+    <a href="/">← Back to console</a>
+  </aside>
+  <main>
+    <h1>Getting started</h1>
+    <p>Request access through the internal portal, then authenticate against the gateway to obtain a
+       short-lived token. Tokens are scoped per service and expire after 60 minutes.</p>
+    <h3>Local setup</h3>
+    <pre><code>git clone git@git.internal:platform/console.git
+cd console
+make bootstrap
+make run        # serves on :8080</code></pre>
+    <h3 id="api">API overview</h3>
+    <p>Service health is exposed as a small JSON document; the status page publishes a
+       machine-readable summary. Example:</p>
+    <pre><code>curl -s https://console.internal/api/health.json
+curl -s https://console.internal/status/api/summary.json</code></pre>
+    <p>Authenticated service endpoints live behind the gateway and require a short-lived
+       bearer token (see above).</p>
+  </main>
+</div>
+</body>
+</html>

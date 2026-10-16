@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "brand": "Harborline",
+  "note": "Semilla curada de portales INERTES (estáticos + mock data). El agente worldsmith mezcla/expande esto. Sin backend ni ejecución.",
+  "mounts": [
+    { "prefix": "/docs", "dir": "sites/docs", "spa": false },
+    { "prefix": "/status", "dir": "sites/status", "spa": false },
+    { "prefix": "/", "dir": "sites/console", "spa": false }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "theme": "saas",
+  "server_banner": "cloudflare",
+  "vocabulary": [
+    "console", "tenants", "billing", "accounts", "usage", "exports",
+    "integrations", "webhooks", "audit", "settings", "members", "projects"
+  ],
+  "paths": [
+    "/console/", "/billing/", "/settings/", "/account/", "/integrations/", "/api/"
+  ],
+  "api_prefixes": ["/api/v2"],
+  "api_resources": [
+    "tenant", "subscription", "invoice", "api-key", "webhook", "connector",
+    "session", "export", "member", "project", "audit-log", "usage-record"
+  ]
+}

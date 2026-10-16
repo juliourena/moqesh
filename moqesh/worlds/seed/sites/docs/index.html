@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Harborline Docs</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<style>
+  body{margin:0;font:15px/1.65 -apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:#1f2430;background:#fff}
+  .wrap{display:flex;min-height:100vh}
+  aside{width:240px;border-right:1px solid #e5e7eb;padding:22px 18px;background:#fafafa}
+  aside h2{font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:#6b7280;margin:16px 0 6px}
+  aside a{display:block;color:#374151;text-decoration:none;padding:4px 0;font-size:14px}
+  aside a:hover{color:#2563eb}
+  main{flex:1;max-width:760px;padding:36px 42px}
+  h1{font-size:26px;margin:0 0 8px} h3{margin-top:28px}
+  code{font-family:ui-monospace,Menlo,monospace;background:#f3f4f6;padding:1px 5px;border-radius:4px}
+  pre{background:#0f1115;color:#e6e6e6;padding:14px 16px;border-radius:8px;overflow:auto}
+  pre code{background:none;color:inherit;padding:0}
+  .muted{color:#6b7280}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <aside>
+    <strong>Harborline Docs</strong>
+    <h2>Guides</h2>
+    <a href="/docs/">Introduction</a>
+    <a href="/docs/getting-started.html">Getting started</a>
+    <h2>Reference</h2>
+    <a href="/docs/getting-started.html#api">API overview</a>
+    <a href="/">← Back to console</a>
+  </aside>
+  <main>
+    <h1>Introduction</h1>
+    <p class="muted">Internal engineering documentation for the Harborline platform.</p>
+    <p>This handbook covers how our services are built, deployed and operated. It is intended for
+       engineers on the platform and on-call rotations. For access requests, use the internal portal.</p>
+    <h3>Platform at a glance</h3>
+    <p>The platform is a set of services behind the <code>auth-gateway</code>, deployed to Kubernetes
+       via the CI pipeline. Configuration is managed declaratively; production changes go through review.</p>
+    <h3>Conventions</h3>
+    <p>Services expose a <code>/health</code> endpoint and emit structured logs. Secrets are managed by
+       the secrets store and never committed. See <a href="/docs/getting-started.html">Getting started</a>.</p>
+  </main>
+</div>
+</body>
+</html>

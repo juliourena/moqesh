@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+
+# Base de datos / datos locales
+*.db
+data/
+
+# Node / frontend
+web/node_modules/
+web/dist/
+web/.vite/
+
+# Entorno
+.env
+
+# Artefactos del forge (plantilla DLL generada offline)
+moqesh/assets/*.dll
+
+# Artefactos de build (sdist/wheel)
+dist/
+build/
+
+# Bundles estáticos generados en runtime + binarios del agente compilados
+bundles/
+moqesh/agent/dist/

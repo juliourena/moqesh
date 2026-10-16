@@ -1,0 +1,16 @@
+{
+  "theme": "ecommerce",
+  "server_banner": "nginx/1.25.3",
+  "vocabulary": [
+    "catalog", "orders", "customers", "inventory", "shipping", "payments",
+    "promotions", "returns", "warehouse", "suppliers", "admin", "reports"
+  ],
+  "paths": [
+    "/admin/", "/catalog/", "/orders/", "/customers/", "/inventory/", "/api/"
+  ],
+  "api_prefixes": ["/api/v1"],
+  "api_resources": [
+    "product", "sku", "order", "customer", "shipment", "payment",
+    "coupon", "refund", "supplier", "category", "cart", "review"
+  ]
+}

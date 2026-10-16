@@ -1,0 +1,11 @@
+{
+  "status": "ok",
+  "version": "2026.09.3",
+  "uptime_seconds": {{moqesh.uptime_seconds}},
+  "timestamp": "{{moqesh.now_iso}}",
+  "checks": {
+    "database": "ok",
+    "cache": "ok",
+    "queue": "degraded"
+  }
+}

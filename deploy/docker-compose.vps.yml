@@ -1,0 +1,83 @@
+# Despliegue "en producción" (VPS): honeypot PÚBLICO en :8080 detrás de un reverse-proxy
+# (nginx), y el dashboard SOLO en localhost (túnel SSH) por defecto.
+# Uso:  docker compose -p moqesh -f deploy/docker-compose.vps.yml up -d --build
+services:
+  moqesh:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    container_name: moqesh-ai
+    # El honeypot (:8080) NO se publica directo: va detrás de nginx (servicio `edge`), que posee
+    # el socket y emite cabeceras de un server real (Server: nginx), ocultando el stack ASGI.
+    # El dashboard queda solo en localhost (túnel SSH) por defecto.
+    expose:
+      - "8080"
+      - "5000"
+    ports:
+      - "127.0.0.1:5000:5000"    # dashboard por túnel → ssh -L 5000:localhost:5000
+    volumes:
+      - moqesh-data:/app/data
+    environment:
+      - MOQESH_DB_PATH=/app/data/moqesh.db
+      - MOQESH_HONEYPOT_PORT=8080
+      - MOQESH_DASHBOARD_PORT=5000
+      # Contenido: Template (genérico, zero-config) por defecto. Para imitar un sitio REAL que
+      # controles, usa Mimic + la URL del objetivo (crawl read-only):
+      - MOQESH_GENERATION_MODE=Template
+      # - MOQESH_GENERATION_MODE=Mimic
+      # - MOQESH_TARGET_URL=https://your-target.example.com
+      # - MOQESH_SITE_PROFILE=saas          # opcional: saas|corp|ecommerce|nonprofit
+      - MOQESH_REALISM_LEVEL=3
+      # Cebo escaso realista (un .env.bak con un token → consola ops oculta); dispara credential_reuse.
+      - MOQESH_SCENARIOS_ENABLED=true
+      # World (contenido estático inerte multi-sitio) activo; autosiembra la semilla.
+      - MOQESH_WORLD_ENABLED=true
+      # Con World, el tarpit agresivo delata (retardos en ficheros estáticos). OFF.
+      - MOQESH_ADAPTIVE_TARPIT=false
+      # Bloqueo activo: 403 a atacantes confirmados (credential_reuse siempre bloquea).
+      - MOQESH_ENFORCE_BLOCK=true
+      - MOQESH_AUTO_BLOCK_SCORE=0.0
+      # Confirmación con IA: heurística (sin costo). Para LLM: MOQESH_AI_PROVIDER=openai + base_url/api_key/model.
+      - MOQESH_AI_ENABLED=false
+      - MOQESH_AI_PROVIDER=heuristic
+      # URL pública para sensores remotos (agente/agentless), servida tras TU TLS:
+      - MOQESH_PUBLIC_URL=https://moqesh.example.com
+      # Auth del dashboard (admin único). La contraseña y el secreto de sesión NO se commitean:
+      # inyéctalos por el entorno del host (export MOQESH_ADMIN_PASSWORD=... antes de 'up'), o deja
+      # la contraseña vacía y léela UNA vez del log del contenedor (se genera y se imprime).
+      - MOQESH_ADMIN_USER=admin
+      - MOQESH_ADMIN_PASSWORD=${MOQESH_ADMIN_PASSWORD:-}
+      - MOQESH_SESSION_SECRET=${MOQESH_SESSION_SECRET:-}
+      - MOQESH_COOKIE_SECURE=true   # el subdominio admin va por HTTPS
+    restart: unless-stopped
+    networks:
+      - default
+      # Para exponer el dashboard en un subdominio TLS con TU reverse-proxy (Caddy/Traefik/nginx),
+      # descomenta y conéctalo a la red externa de tu proxy (ver deploy/caddy-admin.snippet):
+      # - proxy
+
+  # Reverse-proxy delante del honeypot: posee el socket público :8080 y emite cabeceras de un
+  # nginx real; reenvía la IP real del atacante por X-Forwarded-For (el honeypot la lee de ahí).
+  edge:
+    image: nginx:1.27-alpine
+    container_name: moqesh-edge
+    depends_on:
+      - moqesh
+    ports:
+      - "0.0.0.0:8080:8080"
+    volumes:
+      - ./honeypot.nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    restart: unless-stopped
+    networks:
+      - default
+
+volumes:
+  moqesh-data:
+
+networks:
+  default: {}
+  # Red externa de TU reverse-proxy (p.ej. el que sirve el subdominio admin). Descomenta, ajusta
+  # el nombre y añade `- proxy` a la red del servicio `moqesh` para conectarlo a un proxy existente:
+  # proxy:
+  #   external: true
+  #   name: your-proxy-network

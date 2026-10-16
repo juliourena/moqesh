@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Harborline — Operations</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<style>
+  :root{--bg:#f6f7f9;--card:#fff;--ink:#1f2430;--muted:#6b7280;--line:#e5e7eb;--brand:#2563eb;--ok:#16a34a;--warn:#d97706}
+  *{box-sizing:border-box}
+  body{margin:0;font:14px/1.5 -apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink)}
+  header{background:#fff;border-bottom:1px solid var(--line);padding:14px 24px;display:flex;align-items:center;justify-content:space-between}
+  .brand{font-weight:600;letter-spacing:-.2px}
+  nav a{color:var(--muted);text-decoration:none;margin-left:18px;font-size:13px}
+  nav a:hover{color:var(--ink)}
+  main{max-width:1040px;margin:28px auto;padding:0 24px}
+  h1{font-size:20px;margin:0 0 4px}
+  .sub{color:var(--muted);margin:0 0 24px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:28px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px}
+  .kpi{font-size:26px;font-weight:600}
+  .lbl{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.4px}
+  table{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+  th,td{text-align:left;padding:10px 14px;border-bottom:1px solid var(--line);font-size:13px}
+  th{color:var(--muted);font-weight:500;background:#fafafa}
+  .pill{font-size:11px;padding:2px 8px;border-radius:999px}
+  .pill.ok{background:#e7f6ec;color:var(--ok)} .pill.warn{background:#fdf1e3;color:var(--warn)}
+  footer{max-width:1040px;margin:24px auto;padding:0 24px;color:var(--muted);font-size:12px}
+  code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+</style>
+</head>
+<body>
+<header>
+  <span class="brand">Harborline <span style="color:var(--muted);font-weight:400">· Operations</span></span>
+  <nav><a href="/">Overview</a><a href="/status/">Status</a><a href="/docs/">Docs</a></nav>
+</header>
+<main>
+  <h1>Operations overview</h1>
+  <p class="sub">Internal control plane. Environment: <strong>production</strong>.</p>
+  <div class="grid">
+    <div class="card"><div class="lbl">Services</div><div class="kpi">18</div></div>
+    <div class="card"><div class="lbl">Healthy</div><div class="kpi">17</div></div>
+    <div class="card"><div class="lbl">Open incidents</div><div class="kpi">1</div></div>
+    <div class="card"><div class="lbl">Deploys (7d)</div><div class="kpi">42</div></div>
+  </div>
+  <table>
+    <thead><tr><th>Service</th><th>Version</th><th>Last deploy</th><th>Status</th></tr></thead>
+    <tbody>
+      <tr><td>billing-api</td><td><code>3.14.2</code></td><td>2026-09-28</td><td><span class="pill ok">healthy</span></td></tr>
+      <tr><td>auth-gateway</td><td><code>2.9.0</code></td><td>2026-09-30</td><td><span class="pill ok">healthy</span></td></tr>
+      <tr><td>reporting-worker</td><td><code>1.22.5</code></td><td>2026-09-25</td><td><span class="pill warn">degraded</span></td></tr>
+      <tr><td>notifications</td><td><code>4.1.1</code></td><td>2026-10-01</td><td><span class="pill ok">healthy</span></td></tr>
+    </tbody>
+  </table>
+</main>
+<footer>© Harborline. Build <code>a4f9c2e</code> · <a href="/docs/" style="color:inherit">documentation</a></footer>
+</body>
+</html>

@@ -1,0 +1,20 @@
+.git
+.github
+.venv
+venv
+web/node_modules
+web/dist
+web/.vite
+tests
+docs
+tools
+**/__pycache__
+*.py[cod]
+.ruff_cache
+.pytest_cache
+*.db
+bundles/
+data/
+*.md
+!README.md
+# NOTA: no excluir moqesh/agent/dist — ahí van los binarios del agente del CI.
